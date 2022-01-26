@@ -8,7 +8,7 @@ class UserManager(BaseUserManager):
     def create_user(self,email,name,password):
         """ Create a normal user """
 
-        email = self.normalize_email(email=email)
+        email = email.lower()
 
         user = self.model(email=email,name=name)
         user.set_password(password)

@@ -1,11 +1,9 @@
 from django.urls import path,include
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 from todo_api.views import TODOView
 
-router = DefaultRouter()
+router = SimpleRouter()
 
-router.register(r'',TODOView,basename='todo')
+router.register('todo',TODOView,basename='todo')
 
-urlpatterns = [
-    path('',include(router.urls))
-]
+urlpatterns = router.urls

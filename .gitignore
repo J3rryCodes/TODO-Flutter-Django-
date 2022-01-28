@@ -51,3 +51,5 @@ app.*.map.json
 /webproject/Include/
 /webproject/Scripts/
 /webproject/pyenv.cfg
+*/migrations/*.py
+*sqlite3

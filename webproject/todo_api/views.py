@@ -1,7 +1,6 @@
 from this import d
 from django.http import request
 from django.shortcuts import get_object_or_404, render
-from markupsafe import re
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -20,12 +19,21 @@ class TODOView(ViewSet):
         """List all TODOS By Date"""
 
         user = UserProfileModel.objects.get(email=request.user)
-        date = request.data['date']
-        todo_list = TODOModel.objects.filter(date=date,user=user)
+        date = request.data.get("date")
+        try:
+            todo_list = []
+            if date is None:
+                todo_list = TODOModel.objects.filter(user=user)
+            else:
+                todo_list = TODOModel.objects.filter(date=date,user=user)
+                
+            todo_serializer = TODOModelSeralizer(instance=todo_list,many=True)
 
-        todo_serializer = TODOModelSeralizer(instance=todo_list,many=True)
+            return Response({'status':True,'todo_list':todo_serializer.data})
+        except TODOModel.DoesNotExist:
+            return Response({'status':True,'todo_list':[]})
 
-        return Response({'status':True,'todo_list':todo_serializer.data})
+
         
     def retrieve(self,request,pk):
         """ Get one TODO with currosponding ID"""
@@ -60,10 +68,15 @@ class TODOView(ViewSet):
     def create(self,request):
 
         todo_serializer = TODOModelSeralizer(data=request.data)
-        if todo_serializer.is_valid():
-            #create custon create function
-           data = todo_serializer.create()
-        return Response({'status':True,"error":"",})
+
+        print(todo_serializer.initial_data)
+
+        if todo_serializer.is_valid(raise_exception=True):
+           data = todo_serializer.save(user=request.user)
+           print(data)
+           return Response({'status':True,"error":""})
+        else:
+           return Response({'status':False,"error":"Something went to an error"})
 
 
     def destroy(self,request,pk):

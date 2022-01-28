@@ -1,6 +1,3 @@
-from this import d
-from django.http import request
-from django.shortcuts import get_object_or_404, render
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -34,7 +31,6 @@ class TODOView(ViewSet):
             return Response({'status':True,'todo_list':[]})
 
 
-        
     def retrieve(self,request,pk):
         """ Get one TODO with currosponding ID"""
 
